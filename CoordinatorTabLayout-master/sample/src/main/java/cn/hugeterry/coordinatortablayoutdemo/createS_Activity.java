@@ -1,5 +1,6 @@
 package cn.hugeterry.coordinatortablayoutdemo;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,7 +25,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class createS_Activity extends AppCompatActivity {
-    Button addBtn, back, translationBtn;
+    Button addBtn, back, translationBtn, pic;
     EditText editSpell, editMeaning;
     String spelling, meaning;
     private String result;
@@ -104,6 +105,7 @@ public class createS_Activity extends AppCompatActivity {
         editSpell= (EditText)findViewById(R.id.spelling);
         editMeaning= (EditText)findViewById(R.id.meaning);
         translationBtn = (Button) findViewById(R.id.translationBtn);
+        pic = (Button) findViewById(R.id.pic);
 
         //초기화
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -113,6 +115,19 @@ public class createS_Activity extends AppCompatActivity {
         toolbar.setSubtitle(R.string.addSentence); //부제목 넣기
         toolbar.setNavigationIcon(R.mipmap.ic_launcher); //제목앞에 아이콘 넣기
         setSupportActionBar(toolbar); //툴바를 액션바와 같게 만들어 준다.
+
+        pic.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                //spelling = editMeaning.getText().toString();
+
+                Intent intent = new Intent(getApplicationContext(),OCR.class);
+                //intent.putExtra("OCRTextView", OCRTextView);
+                startActivityForResult(intent, 1);
+                //startActivity(intent);
+
+            }
+        });
 
         translationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,5 +175,27 @@ public class createS_Activity extends AppCompatActivity {
         setResult(RESULT_CANCELED,intent); // 아무 내용도 return X
         super.onBackPressed();
     }
+
+
+    // Result가 도착했을 때 -> 문장 추가
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // category DB에 추가
+
+        if(requestCode == 1){ // 얻어온 문장으로 설정하기
+            if(resultCode == Activity.RESULT_OK) {
+                editSpell.setText(data.getStringExtra("OCRtxt"));
+            }
+        }
+        else if(resultCode == Activity.RESULT_CANCELED){
+            // 반환값이 없을 경우, 유지
+        }
+    }
+
+
+
+
 }
 
